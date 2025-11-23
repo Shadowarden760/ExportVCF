@@ -1,3 +1,8 @@
 <resources>
+
     <string name="app_name">ExportVCF</string>
+
+    <string name="main_text_version" translatable="false">Version:</string>
+    <string name="main_text_creator" translatable="false">Created by Shadowarden760</string>
+
 </resources>
