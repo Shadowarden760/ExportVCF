@@ -17,7 +17,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ExportVCFTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    modifier = Modifier.fillMaxSize()
+                ) { innerPadding ->
                     MainScreen(modifier = Modifier.padding(paddingValues = innerPadding))
                 }
             }
