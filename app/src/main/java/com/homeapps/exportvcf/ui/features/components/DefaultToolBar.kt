@@ -16,17 +16,19 @@ import com.homeapps.exportvcf.R
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun DefaultToolBar(modifier: Modifier = Modifier) {
+fun DefaultToolBar(
+    modifier: Modifier = Modifier,
+    onExport: () -> Unit = { println("onExport") },
+    onShare: () -> Unit = { println("onShare") },
+    onDelete: () -> Unit = { println("onDelete") },
+    onSettings: () -> Unit = { println("onSettings") },
+) {
     val expanded = remember { mutableStateOf(false) }
     VerticalFloatingToolbar(
         expanded = expanded.value,
         colors = FloatingToolbarDefaults.standardFloatingToolbarColors(),
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    expanded.value = !expanded.value
-                }
-            ) {
+            FloatingActionButton(onClick = { expanded.value = !expanded.value }) {
                 Icon(
                     imageVector = if(expanded.value) {
                         ImageVector.vectorResource(R.drawable.ic_decrease)
@@ -40,15 +42,14 @@ fun DefaultToolBar(modifier: Modifier = Modifier) {
         modifier = modifier
     ) {
         listOf(
-            R.drawable.ic_share,
-            R.drawable.ic_delete,
-            R.drawable.ic_settings
-        ).forEach {  drawable ->
-            IconButton(
-                onClick = {}
-            ) {
+            Pair(R.drawable.ic_save, onExport),
+            Pair(R.drawable.ic_share, onShare),
+            Pair(R.drawable.ic_delete, onDelete),
+            Pair(R.drawable.ic_settings, onSettings)
+        ).forEach { item ->
+            IconButton(onClick = item.second) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(drawable),
+                    imageVector = ImageVector.vectorResource(item.first),
                     contentDescription = null
                 )
             }
