@@ -28,5 +28,7 @@ class MainViewModel: ViewModel() {
         }
     }
 
-
+    fun resetContacts() {
+        _contacts.value = emptyList()
+    }
 }
