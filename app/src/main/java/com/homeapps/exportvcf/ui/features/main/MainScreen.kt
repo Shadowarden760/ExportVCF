@@ -1,6 +1,7 @@
 package com.homeapps.exportvcf.ui.features.main
 
 import android.Manifest
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -20,8 +21,11 @@ import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -39,27 +43,48 @@ import com.homeapps.exportvcf.ui.features.components.DefaultToolBar
 import com.homeapps.exportvcf.ui.features.main.components.ContactCards
 import com.homeapps.exportvcf.ui.features.main.components.ContactsPermissionDialog
 import com.homeapps.exportvcf.utils.PermissionManager
+import io.github.vinceglb.filekit.dialogs.compose.rememberFileSaverLauncher
+import io.github.vinceglb.filekit.write
+import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
 
 @Composable
 fun MainScreen(modifier: Modifier) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val permissionManager = PermissionManager(appContext = LocalContext.current)
     val viewModel = remember { MainViewModel() }
+    var expanded by remember { mutableStateOf(false) }
     val contactsProvider = rememberContactsProvider()
     val contacts = viewModel.contacts.collectAsStateWithLifecycle()
-    val openPermissionDialog = remember { mutableStateOf(false) }
-    val hasContactPermission = remember { mutableStateOf(permissionManager.checkPermission(permission = Manifest.permission.READ_CONTACTS)) }
+    var openPermissionDialog by remember { mutableStateOf(false) }
+    var hasContactPermission by remember { mutableStateOf(permissionManager.checkPermission(permission = Manifest.permission.READ_CONTACTS)) }
+    val fileSaverLauncher = rememberFileSaverLauncher { file ->
+        if (file != null) {
+            val result = runCatching {
+                scope.launch {
+                    file.write(contacts.value.toString().toByteArray())
+                }
+            }
+            when(result.isSuccess) {
+                true -> Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
+                false -> Toast.makeText(context, "Failure", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(context, "Operation was canceled", Toast.LENGTH_SHORT).show()
+        }
+    }
     val contactPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        hasContactPermission.value = isGranted
+        hasContactPermission = isGranted
         if (!isGranted) {
-            openPermissionDialog.value = true
+            openPermissionDialog = true
         }
     }
 
     LaunchedEffect(null) {
-        if (!hasContactPermission.value) {
+        if (!hasContactPermission) {
             contactPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
         }
     }
@@ -71,14 +96,14 @@ fun MainScreen(modifier: Modifier) {
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "${stringResource(R.string.app_name)} (${hasContactPermission.value})",
+                text = "${stringResource(R.string.app_name)} (${hasContactPermission})",
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth().padding(16.dp)
             )
             if(contacts.value.isEmpty()) {
                 Spacer(modifier = Modifier.weight(1f))
                 OutlinedIconButton(
-                    enabled = hasContactPermission.value,
+                    enabled = hasContactPermission,
                     shape = CircleShape,
                     colors = IconButtonDefaults.outlinedIconButtonVibrantColors(),
                     border = BorderStroke(width = 4.dp, color = MaterialTheme.colorScheme.outline),
@@ -111,18 +136,36 @@ fun MainScreen(modifier: Modifier) {
                 modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
             )
         }
-        DefaultToolBar(modifier = modifier.align(Alignment.BottomEnd).padding(16.dp))
+        DefaultToolBar(
+            expanded = expanded,
+            onExpandClick = { expanded = !expanded },
+            exportEnabled = contacts.value.isNotEmpty(),
+            onExport = {
+                fileSaverLauncher.launch(
+                    suggestedName = "saved_contacts_${System.currentTimeMillis()}",
+                    extension = "txt"
+                )
+                expanded = false
+            },
+            shareEnabled = contacts.value.isNotEmpty(),
+            resetEnabled = contacts.value.isNotEmpty(),
+            onReset = {
+                viewModel.resetContacts()
+                expanded = false
+            },
+            modifier = modifier.align(Alignment.BottomEnd).padding(16.dp)
+        )
     }
 
-    if (openPermissionDialog.value) {
+    if (openPermissionDialog) {
         ContactsPermissionDialog(
             onDismiss = {
-                openPermissionDialog.value = false
+                openPermissionDialog = false
                 MainActivity().finishAffinity()
                 exitProcess(0)
             },
             onConfirm = {
-                openPermissionDialog.value = false
+                openPermissionDialog = false
                 contactPermissionLauncher.launch(input = Manifest.permission.READ_CONTACTS)
             }
         )

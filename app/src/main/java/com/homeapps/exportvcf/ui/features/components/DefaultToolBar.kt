@@ -1,5 +1,6 @@
 package com.homeapps.exportvcf.ui.features.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingToolbarDefaults
@@ -7,8 +8,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.VerticalFloatingToolbar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -17,20 +16,24 @@ import com.homeapps.exportvcf.R
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DefaultToolBar(
+    expanded: Boolean,
+    onExpandClick: () -> Unit,
     modifier: Modifier = Modifier,
+    exportEnabled: Boolean = true,
     onExport: () -> Unit = { println("onExport") },
+    shareEnabled: Boolean = true,
     onShare: () -> Unit = { println("onShare") },
-    onDelete: () -> Unit = { println("onDelete") },
+    resetEnabled: Boolean = true,
+    onReset: () -> Unit = { println("onReset") },
     onSettings: () -> Unit = { println("onSettings") },
 ) {
-    val expanded = remember { mutableStateOf(false) }
     VerticalFloatingToolbar(
-        expanded = expanded.value,
+        expanded = expanded,
         colors = FloatingToolbarDefaults.standardFloatingToolbarColors(),
         floatingActionButton = {
-            FloatingActionButton(onClick = { expanded.value = !expanded.value }) {
+            FloatingActionButton(onClick = onExpandClick) {
                 Icon(
-                    imageVector = if(expanded.value) {
+                    imageVector = if(expanded) {
                         ImageVector.vectorResource(R.drawable.ic_decrease)
                     } else {
                         ImageVector.vectorResource(R.drawable.ic_expand)
@@ -42,17 +45,26 @@ fun DefaultToolBar(
         modifier = modifier
     ) {
         listOf(
-            Pair(R.drawable.ic_save, onExport),
-            Pair(R.drawable.ic_share, onShare),
-            Pair(R.drawable.ic_delete, onDelete),
-            Pair(R.drawable.ic_settings, onSettings)
+            MenuItem(icon = R.drawable.ic_save, operation = onExport, enabled = exportEnabled),
+            MenuItem(icon = R.drawable.ic_share, operation = onShare, enabled = shareEnabled),
+            MenuItem(icon = R.drawable.ic_delete, operation = onReset, enabled = resetEnabled),
+            MenuItem(icon = R.drawable.ic_settings, operation = onSettings, enabled = true)
         ).forEach { item ->
-            IconButton(onClick = item.second) {
+            IconButton(
+                onClick = item.operation,
+                enabled = item.enabled
+            ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(item.first),
+                    imageVector = ImageVector.vectorResource(item.icon),
                     contentDescription = null
                 )
             }
         }
     }
 }
+
+private data class MenuItem(
+    @DrawableRes val icon: Int,
+    val operation: () -> Unit,
+    val enabled: Boolean
+)
