@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -63,7 +64,8 @@ fun MainScreen(modifier: Modifier) {
         if (file != null) {
             val result = runCatching {
                 scope.launch {
-                    file.write(contacts.value.toString().toByteArray())
+                    val cardBytes = viewModel.createVCFCards()
+                    file.write(cardBytes)
                 }
             }
             when(result.isSuccess) {
@@ -117,6 +119,14 @@ fun MainScreen(modifier: Modifier) {
                     )
                 }
             } else {
+                Card(
+                    modifier = Modifier.align(Alignment.End).padding(end = 16.dp)
+                ) {
+                    Text(
+                        text = "Found ${contacts.value.size} accounts",
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
                 ContactCards(
                     contacts = contacts.value,
                     modifier = Modifier.weight(20F).padding(16.dp)
@@ -143,7 +153,7 @@ fun MainScreen(modifier: Modifier) {
             onExport = {
                 fileSaverLauncher.launch(
                     suggestedName = "saved_contacts_${System.currentTimeMillis()}",
-                    extension = "txt"
+                    extension = "vcf"
                 )
                 expanded = false
             },
