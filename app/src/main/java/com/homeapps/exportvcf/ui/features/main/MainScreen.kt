@@ -110,7 +110,7 @@ fun MainScreen(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(end = 16.dp)
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
             ) {
                 Spacer(modifier = Modifier.weight(1.5F))
                 Text(
@@ -125,6 +125,7 @@ fun MainScreen(
                         lightVector = ImageVector.vectorResource(R.drawable.ic_light_mode)
                     ),
                     animationState = animationState,
+                    iconSize = 35.dp,
                     modifier = Modifier.weight(0.5f)
                 )
             }
@@ -145,7 +146,7 @@ fun MainScreen(
                     )
                 }
             } else {
-                Card(modifier = Modifier.align(Alignment.End).padding(end = 16.dp)) {
+                Card(modifier = Modifier.align(Alignment.End).padding(top = 16.dp, end = 16.dp)) {
                     Text(
                         text = "Found ${contacts.value.size} accounts",
                         modifier = Modifier.padding(8.dp)
@@ -153,6 +154,11 @@ fun MainScreen(
                 }
                 ContactCards(
                     contacts = contacts.value,
+//                            .toMutableList().apply {
+//                            repeat(20) {
+//                                add(this.first())
+//                            }
+//                        },
                     modifier = Modifier.weight(20F).padding(16.dp)
                 )
             }

@@ -89,6 +89,8 @@ dependencies {
 
     implementation(libs.themeanimator)
 
+    implementation(libs.androidx.datastore.preferences)
+
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 

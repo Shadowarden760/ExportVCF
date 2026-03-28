@@ -1,6 +1,7 @@
 [versions]
 agp = "9.1.0"
 contactsProvider = "1.1.13"
+datastorePreferences = "1.2.1"
 filekitDialogs = "0.13.0"
 kotlin = "2.3.20"
 coreKtx = "1.18.0"
@@ -11,11 +12,12 @@ lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
 composeBom = "2026.03.01"
 uiTextGoogleFonts = "1.10.6"
-themeanimator = "0.0.25"
+themeanimator = "0.0.19"
 
 [libraries]
 androidx-compose-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 contacts-provider = { module = "io.github.dev-bilal-azzam:contacts-provider", version.ref = "contactsProvider" }
 filekit-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "filekitDialogs" }
 filekit-dialogs = { module = "io.github.vinceglb:filekit-dialogs", version.ref = "filekitDialogs" }
