@@ -8,7 +8,10 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -34,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bilalazzam.contacts_provider.rememberContactsProvider
@@ -44,6 +48,10 @@ import com.homeapps.exportvcf.ui.features.components.DefaultToolBar
 import com.homeapps.exportvcf.ui.features.main.components.ContactCards
 import com.homeapps.exportvcf.ui.features.main.components.ContactsPermissionDialog
 import com.homeapps.exportvcf.utils.PermissionManager
+import io.github.themeanimator.ThemeAnimationState
+import io.github.themeanimator.button.ThemeSwitchButton
+import io.github.themeanimator.button.ThemeSwitchIcon
+import io.github.themeanimator.rememberThemeAnimationState
 import io.github.vinceglb.filekit.dialogs.FileKitDialogSettings
 import io.github.vinceglb.filekit.dialogs.compose.rememberFileSaverLauncher
 import io.github.vinceglb.filekit.write
@@ -51,7 +59,10 @@ import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
 
 @Composable
-fun MainScreen(modifier: Modifier) {
+fun MainScreen(
+    animationState: ThemeAnimationState,
+    modifier: Modifier
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val permissionManager = PermissionManager(appContext = LocalContext.current)
@@ -95,16 +106,29 @@ fun MainScreen(modifier: Modifier) {
     Box(modifier = modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
-            modifier = Modifier.padding(16.dp)
+            verticalArrangement = Arrangement.Top
         ) {
-            Text(
-                text = stringResource(R.string.app_name),
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(16.dp)
-            )
-            if(contacts.value.isEmpty()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth().padding(end = 16.dp)
+            ) {
+                Spacer(modifier = Modifier.weight(1.5F))
+                Text(
+                    text = stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.titleLarge,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.weight(1F))
+                ThemeSwitchButton(
+                    buttonIcon = ThemeSwitchIcon.DuoVector(
+                        darkVector = ImageVector.vectorResource(R.drawable.ic_dark_mode),
+                        lightVector = ImageVector.vectorResource(R.drawable.ic_light_mode)
+                    ),
+                    animationState = animationState,
+                    modifier = Modifier.weight(0.5f)
+                )
+            }
+            if (contacts.value.isEmpty()) {
                 Spacer(modifier = Modifier.weight(1f))
                 OutlinedIconButton(
                     enabled = hasContactPermission,
@@ -180,4 +204,13 @@ fun MainScreen(modifier: Modifier) {
             }
         )
     }
+}
+
+@Preview
+@Composable
+private fun MainScreenPreview() {
+    MainScreen(
+        animationState = rememberThemeAnimationState(),
+        modifier = Modifier
+    )
 }

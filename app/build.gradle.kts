@@ -23,8 +23,8 @@ extensions.configure<ApplicationExtension> {
         applicationId = "com.homeapps.exportvcf"
         minSdk = 26
         targetSdk = 36
-        versionCode = 5
-        versionName = "0.0.5"
+        versionCode = 6
+        versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -86,6 +86,8 @@ dependencies {
     implementation(libs.filekit.dialogs.compose)
 
     implementation(libs.androidx.compose.ui.text.google.fonts)
+
+    implementation(libs.themeanimator)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
