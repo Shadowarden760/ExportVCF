@@ -18,14 +18,13 @@ import com.homeapps.exportvcf.R
 fun DefaultToolBar(
     expanded: Boolean,
     onExpandClick: () -> Unit,
-    modifier: Modifier = Modifier,
     exportEnabled: Boolean = true,
     onExport: () -> Unit = { println("onExport") },
     shareEnabled: Boolean = true,
     onShare: () -> Unit = { println("onShare") },
     resetEnabled: Boolean = true,
     onReset: () -> Unit = { println("onReset") },
-    onSettings: () -> Unit = { println("onSettings") },
+    modifier: Modifier = Modifier,
 ) {
     VerticalFloatingToolbar(
         expanded = expanded,
@@ -47,8 +46,7 @@ fun DefaultToolBar(
         listOf(
             MenuItem(icon = R.drawable.ic_save, operation = onExport, enabled = exportEnabled),
             MenuItem(icon = R.drawable.ic_share, operation = onShare, enabled = shareEnabled),
-            MenuItem(icon = R.drawable.ic_delete, operation = onReset, enabled = resetEnabled),
-            MenuItem(icon = R.drawable.ic_settings, operation = onSettings, enabled = true)
+            MenuItem(icon = R.drawable.ic_delete, operation = onReset, enabled = resetEnabled)
         ).forEach { item ->
             IconButton(
                 onClick = item.operation,

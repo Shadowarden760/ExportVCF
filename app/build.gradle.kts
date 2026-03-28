@@ -1,18 +1,19 @@
+import com.android.build.api.dsl.ApplicationExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
 kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.JVM_17
+        freeCompilerArgs.add("-Xexplicit-backing-fields")
     }
 }
 
-android {
+extensions.configure<ApplicationExtension> {
     namespace = "com.homeapps.exportvcf"
     compileSdk {
         version = release(36)
@@ -22,8 +23,8 @@ android {
         applicationId = "com.homeapps.exportvcf"
         minSdk = 26
         targetSdk = 36
-        versionCode = 4
-        versionName = "0.0.4"
+        versionCode = 6
+        versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -66,18 +67,6 @@ android {
         compose = true
         buildConfig = true
     }
-
-    applicationVariants.configureEach {
-        this.outputs.forEach { output ->
-            output as com.android.build.gradle.internal.api.BaseVariantOutputImpl
-            val regex = Regex("-[\\w]+\\.apk$")
-            val matchResult = regex.find(output.outputFileName)
-            output.outputFileName = output.outputFileName.replace("app", "ExportVCF")
-            matchResult?.value?.let { substring ->
-                output.outputFileName = output.outputFileName.replace(substring, "-$versionName.apk")
-            }
-        }
-    }
 }
 
 dependencies {
@@ -95,6 +84,12 @@ dependencies {
 
     implementation(libs.filekit.dialogs)
     implementation(libs.filekit.dialogs.compose)
+
+    implementation(libs.androidx.compose.ui.text.google.fonts)
+
+    implementation(libs.themeanimator)
+
+    implementation(libs.androidx.datastore.preferences)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
