@@ -11,15 +11,13 @@ import androidx.compose.ui.Modifier
 import com.homeapps.exportvcf.ui.features.main.MainScreen
 import com.homeapps.exportvcf.ui.theme.ExportVCFTheme
 
-class MainActivity : ComponentActivity() {
+class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             ExportVCFTheme {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize()
-                ) { innerPadding ->
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     MainScreen(modifier = Modifier.padding(paddingValues = innerPadding))
                 }
             }

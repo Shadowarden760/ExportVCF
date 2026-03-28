@@ -7,16 +7,16 @@ import com.bilalazzam.contacts_provider.ContactsProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class MainViewModel: ViewModel() {
-    private val _contacts = MutableStateFlow<List<Contact>>(emptyList())
-    val contacts = _contacts.asStateFlow()
+    val contacts: StateFlow<List<Contact>>
+        field = MutableStateFlow<List<Contact>>(emptyList())
 
     fun getContacts(contactsProvider: ContactsProvider) {
         CoroutineScope(Dispatchers.IO).launch {
-            val contacts = contactsProvider.getAllContacts(
+            val savedContacts = contactsProvider.getAllContacts(
                 fields = setOf(
                     ContactField.ID,
                     ContactField.FIRST_NAME,
@@ -24,17 +24,17 @@ class MainViewModel: ViewModel() {
                     ContactField.PHONE_NUMBERS
                 )
             )
-            _contacts.value = contacts
+            contacts.value = savedContacts
         }
     }
 
     fun resetContacts() {
-        _contacts.value = emptyList()
+        contacts.value = emptyList()
     }
 
     fun createVCFCards(): ByteArray {
         val stringBuilder = StringBuilder()
-        _contacts.value.forEach { contact ->
+        contacts.value.forEach { contact ->
             val card =
                 "BEGIN:VCARD\n" +
                 "VERSION:3.0\n" +

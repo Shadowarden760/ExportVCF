@@ -44,6 +44,7 @@ import com.homeapps.exportvcf.ui.features.components.DefaultToolBar
 import com.homeapps.exportvcf.ui.features.main.components.ContactCards
 import com.homeapps.exportvcf.ui.features.main.components.ContactsPermissionDialog
 import com.homeapps.exportvcf.utils.PermissionManager
+import io.github.vinceglb.filekit.dialogs.FileKitDialogSettings
 import io.github.vinceglb.filekit.dialogs.compose.rememberFileSaverLauncher
 import io.github.vinceglb.filekit.write
 import kotlinx.coroutines.launch
@@ -60,7 +61,7 @@ fun MainScreen(modifier: Modifier) {
     val contacts = viewModel.contacts.collectAsStateWithLifecycle()
     var openPermissionDialog by remember { mutableStateOf(false) }
     var hasContactPermission by remember { mutableStateOf(permissionManager.checkPermission(permission = Manifest.permission.READ_CONTACTS)) }
-    val fileSaverLauncher = rememberFileSaverLauncher { file ->
+    val fileSaverLauncher = rememberFileSaverLauncher(dialogSettings = FileKitDialogSettings()) { file ->
         if (file != null) {
             val result = runCatching {
                 scope.launch {
@@ -98,7 +99,8 @@ fun MainScreen(modifier: Modifier) {
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "${stringResource(R.string.app_name)} (${hasContactPermission})",
+                text = stringResource(R.string.app_name),
+                style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth().padding(16.dp)
             )
@@ -119,9 +121,7 @@ fun MainScreen(modifier: Modifier) {
                     )
                 }
             } else {
-                Card(
-                    modifier = Modifier.align(Alignment.End).padding(end = 16.dp)
-                ) {
+                Card(modifier = Modifier.align(Alignment.End).padding(end = 16.dp)) {
                     Text(
                         text = "Found ${contacts.value.size} accounts",
                         modifier = Modifier.padding(8.dp)

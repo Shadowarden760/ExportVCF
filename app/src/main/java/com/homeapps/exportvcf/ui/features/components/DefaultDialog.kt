@@ -25,32 +25,16 @@ fun DefaultDialog(
                     contentDescription = null
                 )
             },
-            title = {
-                Text(
-                    text = dialogTitle
-                )
-            },
-            text = {
-                Text(
-                    text = dialogText
-                )
-            },
+            title = { Text(text = dialogTitle) },
+            text = { Text(text = dialogText) },
             onDismissRequest = {},
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        onConfirmation()
-                    }
-                ) {
+                TextButton(onClick = { onConfirmation() }) {
                     Text(text = confirmText)
                 }
             },
             dismissButton = {
-                TextButton(
-                    onClick = {
-                        onDismissRequest()
-                    }
-                ) {
+                TextButton(onClick = { onDismissRequest() }) {
                     Text(text = dismissText)
                 }
             }
@@ -63,23 +47,11 @@ fun DefaultDialog(
                     contentDescription = null
                 )
             },
-            title = {
-                Text(
-                    text = dialogTitle
-                )
-            },
-            text = {
-                Text(
-                    text = dialogText
-                )
-            },
+            title = { Text(text = dialogTitle) },
+            text = { Text(text = dialogText) },
             onDismissRequest = {},
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        onConfirmation()
-                    }
-                ) {
+                TextButton(onClick = { onConfirmation() }) {
                     Text(text = confirmText)
                 }
             },
